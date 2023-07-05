@@ -51,7 +51,7 @@ export default class Container extends Component {
   };
 
   checkHandler = (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     this.setState({
       check:!this.state.check
     })
