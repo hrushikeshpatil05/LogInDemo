@@ -22,7 +22,9 @@ export default class Container extends Component {
        email : null,
        username : null,
        password : null,
-       check : false
+       check : false,
+       page : 0,
+       msg : "",
     }
   }
   
@@ -46,21 +48,59 @@ export default class Container extends Component {
       console.log(this.state.id,this.state.email);
     });
     })
-    
-
+    firebase.auth().createUserWithEmailAndPassword(email,password)
+    .then((userCredintial) => {
+      this.setState({
+        msg:"Registered Succesfully"
+      })
+      console.log("registered");
+    })
+    .catch((error) => {
+      this.setState({
+        msg:error.message
+      })
+      console.log(error.message);
+    })
   };
 
   checkHandler = (e) => {
     e.preventDefault(); 
     this.setState({
-      check:!this.state.check
+      page:0
     })
+  };
+
+  toggleHandler = (e) => {
+   const t = this.state.page;
+   const page = t===0 ? 1 : 0;
+    this.setState({
+       page : page
+    })
+    e.preventDefault();
+  };
+
+  logInHandler = (e) => {
+    e.preventDefault();
+    firebase.auth().signInWithEmailAndPassword(e.target.email.value,e.target.password.value)
+    .then((userCredintial)=>{
+      this.setState({
+        msg:"Loged in Succesfully"
+      })
+      console.log("Success");
+    })
+    .catch((error) => {
+      this.setState({
+        msg:error.message
+      })
+      console.log(error.message);
+    })
+    
   }
 
   render() {
     return (
       <div>
-        {!this.state.check ? <Details submit={this.submitHandler}/> : <Output username={this.state.id} check={this.checkHandler}/>}
+        {this.state.page===0 ? <Details submit={this.submitHandler} toggle={this.toggleHandler} msg={this.state.msg}/> : <Output toggle={this.toggleHandler} login={this.logInHandler} msg={this.state.msg}/>}
           
           
       </div>
